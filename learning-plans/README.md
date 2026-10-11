@@ -1,21 +1,27 @@
 # Learning Plans
 
-> 本文档为个人学习规划,基于公开技术生态(vLLM / Triton / PyTorch / 开源模型),不包含任何雇主相关信息。
+inference-lab 的季度学习计划，包含目标、时间安排、里程碑和验收标准。计划与[实验及阅读笔记](../README.md)在同一 Git 仓库中维护。
 
-个人学习规划存档(公开脱敏版)。按季度组织，现作为统一 inference-lab 仓库的子目录维护。实验与源码阅读笔记见[项目首页](../README.md)。
+## 2026 Q4
 
-## 目录
+覆盖 2026 年 10–12 月，当前主线是 Attention 子系统基础与 paged KV decode attention 原型。
 
-- `2026Q4/` — 2026 Q4(2026.10–2026.12)学习季度计划,对应三年职业发展规划第一阶段「Attention 子系统基础」
-  - `00_季度总览与执行机制.md` — 总览、时间分配、周计划、里程碑、验收标准
-  - `01_vLLM与推理Runtime.md` — vLLM 与推理 Runtime(30%)
-  - `02_CUDA与Triton_GPU性能.md` — CUDA/Triton 与 GPU 性能(30%,季度主项目所在)
-  - `03_编译器横向_MLIR与Inductor.md` — 编译器横向(15%)
-  - `04_Attention与新模型跟踪.md` — Attention 与新模型跟踪(15%)
-  - `05_异构与分布式基础.md` — 异构与分布式基础(10%,打底)
+| 文档 | 内容 | 时间占比 |
+|---|---|---|
+| [00_季度总览与执行机制.md](./2026Q4/00_季度总览与执行机制.md) | 季度总览、周计划、里程碑与验收 | — |
+| [01_vLLM与推理Runtime.md](./2026Q4/01_vLLM与推理Runtime.md) | 请求生命周期、调度与 KV 管理 | 30% |
+| [02_CUDA与Triton_GPU性能.md](./2026Q4/02_CUDA与Triton_GPU性能.md) | 算子实现、profiling 与季度主项目 | 30% |
+| [03_编译器横向_MLIR与Inductor.md](./2026Q4/03_编译器横向_MLIR与Inductor.md) | 编译器概念与 lowering 路径 | 15% |
+| [04_Attention与新模型跟踪.md](./2026Q4/04_Attention与新模型跟踪.md) | 模型结构卡片与适配清单 | 15% |
+| [05_异构与分布式基础.md](./2026Q4/05_异构与分布式基础.md) | 异构硬件与分布式基础 | 10% |
 
-## 脱敏声明
+## 计划与实践的对应关系
 
-本存档内所有文档均为个人学习规划,内容基于公开技术生态(vLLM / Triton / CUDA / MLIR / PyTorch / 开源模型与论文),不包含任何雇主相关信息:不出现雇主名称、非公开项目名称、非公开代码或数据;涉及实际工程经验的内容均已泛化为行业通用表述(如以"分块 Attention(blockwise attention)"泛指一类分块注意力实现,以"SIMT 与 SIMD 并存的异构加速器环境"泛指异构硬件背景)。
+- [Runtime 笔记](../01-vllm-runtime-trace/README.md)：从[v0.31.0 起步问题清单](../01-vllm-runtime-trace/v0.31.0/00-first-request-reading-notes.md)开始。
+- [Triton 实验](../02-triton-kernels/README.md)：每个实验单独建目录，复用报告模板。
+- [端到端 benchmark](../03-e2e-benchmark/README.md)：统一记录环境、负载和性能指标。
+- [编译器笔记](../04-compiler-notes/README.md)与[模型结构卡片](../05-model-cards/README.md)：沉淀阅读结论和适配问题。
 
-配套实验与作品集已合并到本仓库，见[Runtime 笔记](../01-vllm-runtime-trace/README.md)和[Triton 实验](../02-triton-kernels/README.md)。
+本分支围绕 Linux/NVIDIA CUDA 实验推进：先验证 GPU 与小模型推理，再完成 Runtime trace、Triton 正确性对齐、profiling 和端到端 benchmark。环境准备与 submodule 下载命令见[项目首页](../README.md)。
+
+计划里的版本、源码路径和环境示例以实际 checkout 与运行配置为准。完成事项应关联笔记、实验报告或可复现结果；新增季度时建立 `YYYYQn/` 目录并更新本索引。

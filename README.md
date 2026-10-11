@@ -1,72 +1,106 @@
 # inference-lab
 
-## About (EN)
+面向 Linux / NVIDIA CUDA 环境的 LLM 推理实验仓库，维护 vLLM Runtime trace、CUDA/Triton 算子、编译器笔记、模型结构卡片与端到端 benchmark。
 
-A public learning lab tracking my journey from AI compiler engineer (TVM stack, SIMT GPU + SIMD NPU heterogeneity, Attention operators, FA/BFA legalize, DeepSeek adaptation) toward an **LLM Inference / AI Systems Performance** role by 2029. This repo collects reproducible experiments and notes along the full capability chain: vLLM inference runtime tracing, CUDA/Triton GPU kernel work, MLIR/TorchInductor compiler notes, model architecture cards (MLA, SWA), and end-to-end benchmarking (TTFT / TPOT / throughput / memory). Everything here is built on the open-source ecosystem — vLLM, Triton, PyTorch, public models — and documents plans and progress honestly, with no fabricated results. Current milestone: a correct, measurable **paged KV decode attention prototype in Triton** (2026 Q4).
+当前目标是运行小模型，追踪调度、KV 分配、Attention metadata 到 GPU kernel 的执行链，并实现正确可测的 paged KV decode attention 原型。GPU 环境与实验数据尚待目标机器验证。
 
----
+Mac 上的源码阅读与 CPU 练习见 [MacOS 分支](https://github.com/Jankoski-7c00/llm-inference-lab/tree/MacOS)。
 
-## 这是什么
+## 项目结构
 
-**个人定位**:AI 编译器工程师(TVM 编译栈 / SIMT GPU + SIMD NPU 异构 / Attention 算子 / FA·BFA Legalize / DeepSeek 适配),目标是在 2029 年前成为**懂编译器与硬件的 LLM Inference / AI Systems Performance 工程师**。
+| 路径 | 内容 |
+|---|---|
+| [learning-plans/](./learning-plans/README.md) | 季度学习计划、时间分配与验收标准 |
+| [01-vllm-runtime-trace/](./01-vllm-runtime-trace/README.md) | vLLM 调用链、阅读问题和 trace 记录 |
+| [02-triton-kernels/](./02-triton-kernels/README.md) | CUDA/Triton 算子实验与报告模板 |
+| [03-e2e-benchmark/](./03-e2e-benchmark/README.md) | TTFT、TPOT、吞吐和显存测量约定 |
+| [04-compiler-notes/](./04-compiler-notes/README.md) | MLIR、TorchInductor 与编译器架构笔记 |
+| [05-model-cards/](./05-model-cards/README.md) | MLA、SWA 等结构卡片与推理适配清单 |
+| `assets/` | 共享图表与调用链图 |
+| [scripts/setup_env.sh](./scripts/setup_env.sh) | 基础学习依赖脚本，尚未配置 CUDA Runtime |
+| `third_party/vllm/` | vLLM 源码 submodule，固定为 `v0.31.0` |
+| `pyproject.toml` / `uv.lock` / `.python-version` | 基础学习依赖与 Python 版本；尚未锁定 GPU 环境 |
+| `.venv/` | 本地虚拟环境，不提交到 Git |
 
-本仓库是学习作品集:所有里程碑都是**进行中的计划**,而不是已完成的成果。
+## 准备 CUDA 环境
 
-### 能力链地图
-
-```
-Model(结构卡片/适配清单)
-  → Runtime(vLLM 推理运行时 / 调度与 KV 管理)
-    → Compiler(MLIR / TorchInductor / 分层架构笔记)
-      → Kernel(CUDA / Triton:从 reduction 到 paged decode attention)
-        → Hardware(HBM 带宽 / compute 利用率 / SIMT 执行模型)
-          → 端到端性能验证(TTFT / TPOT / 吞吐 / 峰值显存)
-```
-
-### 目录导览
-
-| 目录 | 学习方向 | 状态 |
-|---|---|---|
-| `01-vllm-runtime-trace/` | vLLM 推理 Runtime:decode 调用链 trace、控制变量实验 | 🚧 进行中 |
-| `02-triton-kernels/` | CUDA/Triton GPU 性能:从 reduction 到 paged decode attention | 🚧 进行中 |
-| `03-e2e-benchmark/` | 端到端 benchmark:TTFT / TPOT / 吞吐 / 显存 | ⬜ 未开始 |
-| `04-compiler-notes/` | MLIR / TorchInductor 编译器横向,与 TVM 对比 | ⬜ 未开始 |
-| `05-model-cards/` | 模型结构卡片(MLA、SWA)与适配清单 | ⬜ 未开始 |
-| `learning-plans/` | 季度学习计划与验收标准 | 持续更新 |
-| `scripts/` | 本地环境初始化脚本 | — |
-| `assets/` | 图、调用链图、曲线等公共素材 | — |
-
-### 学习计划与本地环境
-
-季度计划已合并到 [`learning-plans/`](./learning-plans/README.md)，与实验和阅读笔记一起维护。
-
-本地项目根目录：`/Users/jankoski/inference-lab`。安装 [uv](https://docs.astral.sh/uv/getting-started/installation/) 后运行：
+目标环境为 Linux、NVIDIA GPU、可用的 NVIDIA 驱动和 Python 3.12。安装 Git 和 uv，并确认 `nvidia-smi` 能识别 GPU。根据固定版本的 [GPU 安装说明](./third_party/vllm/docs/getting_started/installation/gpu.md)和 [CUDA 安装细节](./third_party/vllm/docs/getting_started/installation/gpu.cuda.inc.md)，按硬件与驱动选择兼容的 wheel。
 
 ```bash
-cd /Users/jankoski/inference-lab
-bash scripts/setup_env.sh
-uv run python
+git clone --branch main --recurse-submodules \
+  https://github.com/Jankoski-7c00/llm-inference-lab.git \
+  ~/inference-lab
+cd ~/inference-lab
+nvidia-smi
 ```
 
-脚本创建项目内的 `.venv/`，使用 Python 3.12，安装 IPython、NumPy、PyTorch 和 Transformers。首次安装生成 `uv.lock`；重复运行按锁文件恢复环境。此环境用于源码阅读、tokenizer 和 CPU 张量练习，完整 vLLM / CUDA / Triton 环境另行配置。初次安装需要网络，不下载模型权重。
+### 安装 vLLM 并验证 GPU
 
-从其他目录也可运行 `bash /Users/jankoski/inference-lab/scripts/setup_env.sh`。配置与锁文件提交到 Git，虚拟环境不提交。仓库远程地址仍为原 `llm-inference-lab` 地址。
+下面是全新 checkout 上的 release-wheel 安装起点，需在目标 GPU 机器上验证。使用干净环境，让 vLLM 解析配套 PyTorch 依赖，不预先安装任意版本的 PyTorch。
 
-### 2026 Q4 里程碑
+```bash
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python "vllm==0.31.0" --torch-backend=auto
+.venv/bin/python - <<'PY'
+import torch
+import vllm
+print("vLLM:", vllm.__version__)
+print("PyTorch:", torch.__version__)
+print("CUDA runtime:", torch.version.cuda)
+assert torch.cuda.is_available(), "CUDA is not available"
+print("GPU:", torch.cuda.get_device_name(0))
+x = torch.tensor([1, 2, 3], device="cuda")
+print("GPU sum:", x.sum().item())
+PY
+```
 
-- [ ] vLLM decode 全链路 trace + 调用链图
-- [ ] Triton reduction / softmax + 首份 profiling
-- [ ] tiled attention + online softmax,对齐 reference
-- [ ] vLLM 控制变量实验(block size / chunked prefill / prefix caching)
-- [ ] paged KV decode attention 原型(Triton,正确可测)
-- [ ] 编译器分层架构笔记
-- [ ] DeepSeek MLA 结构卡片
-- [ ] 季度复盘(12 月底)
+当前根目录的 `uv.lock` 与 `setup_env.sh` 只覆盖基础学习依赖，尚未包含 vLLM/CUDA 的版本组合。此 GPU 环境直接使用 `.venv/bin/python`；不要用 `uv sync` 或 `uv run` 按基础锁文件重建它。验证后将实际驱动、CUDA、PyTorch、Triton 和 vLLM 版本写入实验报告，后续再维护 GPU 专用依赖与安装脚本。
 
-### 脱敏声明
+若需修改 submodule 中的 Python 代码或 CUDA kernel，按固定版本安装文档选择 editable 安装或源码编译。安装 release wheel 时，运行的是安装包，并不会自动运行 submodule 中修改的代码。编译 CUDA 源码还需匹配的 CUDA Toolkit 和 `nvcc`。
 
-本仓库只含基于开源生态(vLLM / Triton / PyTorch / 公开模型)的学习与实验内容,不包含任何雇主代码与数据。
+### 小模型冒烟测试
 
-### License
+GPU 检查通过后，用季度计划中的小模型验证离线推理。首次运行会下载模型权重；按可用显存选择 dtype 与配置。
 
-MIT — 详见 [LICENSE](./LICENSE)。
+```bash
+.venv/bin/python - <<'PY'
+from vllm import LLM, SamplingParams
+llm = LLM(model="Qwen/Qwen2.5-0.5B-Instruct")
+outputs = llm.generate(
+    ["Explain the purpose of a KV cache in one sentence."],
+    SamplingParams(temperature=0, max_tokens=32),
+)
+print(outputs[0].outputs[0].text)
+PY
+```
+
+## 恢复 vLLM submodule
+
+如果克隆时没有使用 `--recurse-submodules`，在项目根目录执行：
+
+```bash
+git submodule update --init --recursive
+git submodule status
+```
+
+该命令检出主仓库记录的固定提交，不追踪 upstream 最新版本。当前提交为 `db9527a46873454610df6dbedf79a36d6bf1a7f6`（`v0.31.0`）。下载源码后即可阅读；运行 vLLM 推理需要另行配置对应平台的依赖。
+
+## GPU 实验路线
+
+1. 阅读[季度总览](./learning-plans/2026Q4/00_季度总览与执行机制.md)，明确学习目标。
+2. 完成 GPU 检查与小模型冒烟测试，按[vLLM 起步阅读笔记](./01-vllm-runtime-trace/v0.31.0/00-first-request-reading-notes.md)记录首次 prefill 和后续 decode。
+3. 追踪实际 runner 与 Attention backend，记录 block table、slot mapping、metadata 与 kernel 调用，再开展 Triton reference 对齐、profiling 和端到端测量。
+
+## 2026 Q4 里程碑
+
+- [ ] vLLM decode 全链路 trace 与调用链图
+- [ ] Triton reduction / softmax 与首份 profiling
+- [ ] tiled attention / online softmax 对齐 reference
+- [ ] block size / chunked prefill / prefix caching 控制变量实验
+- [ ] 正确可测的 paged KV decode attention 原型
+- [ ] 编译器分层架构笔记与 DeepSeek MLA 结构卡片
+- [ ] 季度复盘
+
+## License
+
+MIT，详见 [LICENSE](./LICENSE)。vLLM submodule 使用其自身许可证。
