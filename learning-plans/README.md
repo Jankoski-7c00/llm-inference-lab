@@ -2,7 +2,7 @@
 
 > 本文档为个人学习规划,基于公开技术生态(vLLM / Triton / PyTorch / 开源模型),不包含任何雇主相关信息。
 
-个人学习规划存档(公开脱敏版)。按季度组织。
+个人学习规划存档(公开脱敏版)。按季度组织，现作为统一 inference-lab 仓库的子目录维护。实验与源码阅读笔记见[项目首页](../README.md)。
 
 ## 目录
 
@@ -18,4 +18,4 @@
 
 本存档内所有文档均为个人学习规划,内容基于公开技术生态(vLLM / Triton / CUDA / MLIR / PyTorch / 开源模型与论文),不包含任何雇主相关信息:不出现雇主名称、非公开项目名称、非公开代码或数据;涉及实际工程经验的内容均已泛化为行业通用表述(如以"分块 Attention(blockwise attention)"泛指一类分块注意力实现,以"SIMT 与 SIMD 并存的异构加速器环境"泛指异构硬件背景)。
 
-配套作品集仓库(公开):https://github.com/Jankoski-7c00/llm-inference-lab
+配套实验与作品集已合并到本仓库，见[Runtime 笔记](../01-vllm-runtime-trace/README.md)和[Triton 实验](../02-triton-kernels/README.md)。

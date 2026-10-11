@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-This learning lab currently contains documentation and experiment scaffolding. Use `01-vllm-runtime-trace/` for runtime traces, `02-triton-kernels/` for kernel experiments, `03-e2e-benchmark/` for end-to-end measurements, `04-compiler-notes/` for compiler notes, and `05-model-cards/` for model architecture cards. Store shared diagrams in `assets/`. Keep each kernel experiment in its own subdirectory and copy `02-triton-kernels/_template/REPORT.md` for its report. `third_party/vllm/` is a pinned upstream submodule.
+This unified learning lab contains documentation, quarterly plans in `learning-plans/`, and experiment scaffolding. Use `01-vllm-runtime-trace/` for runtime traces, `02-triton-kernels/` for kernel experiments, `03-e2e-benchmark/` for end-to-end measurements, `04-compiler-notes/` for compiler notes, and `05-model-cards/` for model architecture cards. Store shared diagrams in `assets/`. Keep each kernel experiment in its own subdirectory and copy `02-triton-kernels/_template/REPORT.md` for its report. `third_party/vllm/` is a pinned upstream submodule.
 
 ## Build, Test, and Development Commands
 
@@ -10,9 +10,11 @@ Run these commands from the repository root:
 
 - `git submodule update --init --recursive`: download dependencies at their recorded commits.
 - `git submodule status`: inspect the checked-out dependency revision.
+- `bash scripts/setup_env.sh`: initialize Python 3.12 and install the four learning dependencies; repeat runs use `uv.lock`.
+- `uv run python`: run Python in the project-local `.venv/`.
 - `git diff --check`: catch whitespace errors before committing.
 
-No repository-wide build, dependency manifest, test runner, formatter, or linter is configured yet. Document exact setup and execution commands in each experiment's README and report. Treat changes to the vLLM submodule revision as explicit dependency updates.
+The root `pyproject.toml` and `uv.lock` manage IPython, NumPy, PyTorch, and Transformers for CPU learning. Commit these files and `.python-version`; exclude `.venv/`. No repository-wide build, test runner, formatter, or linter is configured. Document exact setup and execution commands in each experiment's README and report. Treat changes to the vLLM submodule revision as explicit dependency updates.
 
 ## Coding Style & Naming Conventions
 

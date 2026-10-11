@@ -5,7 +5,7 @@
 
 ## 1. 本次目标与阅读边界
 
-对应[季度 Runtime 学习计划](../../../learning-plans/2026Q4/01_vLLM与推理Runtime.md)的 10 月任务：建立 V1 骨架，走通一次请求，为后续「Attention 输入如何生成」的完整 trace 打基础。
+对应[季度 Runtime 学习计划](../../learning-plans/2026Q4/01_vLLM与推理Runtime.md)的 10 月任务：建立 V1 骨架，走通一次请求，为后续「Attention 输入如何生成」的完整 trace 打基础。
 
 第一遍只追一条主线：**短 prompt → 请求入队 → 首次模型计算 → 后续 decode → 请求结束 → 输出文本**。先使用离线 `LLM.generate()`，之后再补 `AsyncLLM` 在线入口。多模态、分布式、LoRA、推测解码留待主线读通后学习。
 

@@ -1,4 +1,4 @@
-# llm-inference-lab
+# inference-lab
 
 ## About (EN)
 
@@ -32,7 +32,25 @@ Model(结构卡片/适配清单)
 | `03-e2e-benchmark/` | 端到端 benchmark:TTFT / TPOT / 吞吐 / 显存 | ⬜ 未开始 |
 | `04-compiler-notes/` | MLIR / TorchInductor 编译器横向,与 TVM 对比 | ⬜ 未开始 |
 | `05-model-cards/` | 模型结构卡片(MLA、SWA)与适配清单 | ⬜ 未开始 |
+| `learning-plans/` | 季度学习计划与验收标准 | 持续更新 |
+| `scripts/` | 本地环境初始化脚本 | — |
 | `assets/` | 图、调用链图、曲线等公共素材 | — |
+
+### 学习计划与本地环境
+
+季度计划已合并到 [`learning-plans/`](./learning-plans/README.md)，与实验和阅读笔记一起维护。
+
+本地项目根目录：`/Users/jankoski/inference-lab`。安装 [uv](https://docs.astral.sh/uv/getting-started/installation/) 后运行：
+
+```bash
+cd /Users/jankoski/inference-lab
+bash scripts/setup_env.sh
+uv run python
+```
+
+脚本创建项目内的 `.venv/`，使用 Python 3.12，安装 IPython、NumPy、PyTorch 和 Transformers。首次安装生成 `uv.lock`；重复运行按锁文件恢复环境。此环境用于源码阅读、tokenizer 和 CPU 张量练习，完整 vLLM / CUDA / Triton 环境另行配置。初次安装需要网络，不下载模型权重。
+
+从其他目录也可运行 `bash /Users/jankoski/inference-lab/scripts/setup_env.sh`。配置与锁文件提交到 Git，虚拟环境不提交。仓库远程地址仍为原 `llm-inference-lab` 地址。
 
 ### 2026 Q4 里程碑
 
