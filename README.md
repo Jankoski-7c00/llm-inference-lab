@@ -1,72 +1,75 @@
 # inference-lab
 
-## About (EN)
+Mac 上的 LLM 推理源码阅读与学习环境，集中维护季度计划、vLLM V1 阅读笔记、模型结构卡片和 CPU 练习。
 
-A public learning lab tracking my journey from AI compiler engineer (TVM stack, SIMT GPU + SIMD NPU heterogeneity, Attention operators, FA/BFA legalize, DeepSeek adaptation) toward an **LLM Inference / AI Systems Performance** role by 2029. This repo collects reproducible experiments and notes along the full capability chain: vLLM inference runtime tracing, CUDA/Triton GPU kernel work, MLIR/TorchInductor compiler notes, model architecture cards (MLA, SWA), and end-to-end benchmarking (TTFT / TPOT / throughput / memory). Everything here is built on the open-source ecosystem — vLLM, Triton, PyTorch, public models — and documents plans and progress honestly, with no fabricated results. Current milestone: a correct, measurable **paged KV decode attention prototype in Triton** (2026 Q4).
+当前重点是通过静态阅读和小脚本理解请求生命周期、调度、KV cache、tokenizer 与张量布局。CUDA/Triton 目录保留实验规划与报告模板，GPU trace 和性能数据尚待实际验证。
 
----
+## 项目结构
 
-## 这是什么
+| 路径 | 内容 |
+|---|---|
+| [learning-plans/](./learning-plans/README.md) | 季度学习计划、时间分配与验收标准 |
+| [01-vllm-runtime-trace/](./01-vllm-runtime-trace/README.md) | vLLM 调用链、阅读问题和 trace 记录 |
+| [02-triton-kernels/](./02-triton-kernels/README.md) | CUDA/Triton 算子实验与报告模板 |
+| [03-e2e-benchmark/](./03-e2e-benchmark/README.md) | TTFT、TPOT、吞吐和显存测量约定 |
+| [04-compiler-notes/](./04-compiler-notes/README.md) | MLIR、TorchInductor 与编译器架构笔记 |
+| [05-model-cards/](./05-model-cards/README.md) | MLA、SWA 等结构卡片与推理适配清单 |
+| `assets/` | 共享图表与调用链图 |
+| [scripts/setup_env.sh](./scripts/setup_env.sh) | 创建并恢复项目学习环境 |
+| `third_party/vllm/` | vLLM 源码 submodule，固定为 `v0.31.0` |
+| `pyproject.toml` / `uv.lock` / `.python-version` | Python 依赖声明、锁文件与解释器版本 |
+| `.venv/` | 本地虚拟环境，不提交到 Git |
 
-**个人定位**:AI 编译器工程师(TVM 编译栈 / SIMT GPU + SIMD NPU 异构 / Attention 算子 / FA·BFA Legalize / DeepSeek 适配),目标是在 2029 年前成为**懂编译器与硬件的 LLM Inference / AI Systems Performance 工程师**。
+## 在新 Mac 上恢复环境
 
-本仓库是学习作品集:所有里程碑都是**进行中的计划**,而不是已完成的成果。
-
-### 能力链地图
-
-```
-Model(结构卡片/适配清单)
-  → Runtime(vLLM 推理运行时 / 调度与 KV 管理)
-    → Compiler(MLIR / TorchInductor / 分层架构笔记)
-      → Kernel(CUDA / Triton:从 reduction 到 paged decode attention)
-        → Hardware(HBM 带宽 / compute 利用率 / SIMT 执行模型)
-          → 端到端性能验证(TTFT / TPOT / 吞吐 / 峰值显存)
-```
-
-### 目录导览
-
-| 目录 | 学习方向 | 状态 |
-|---|---|---|
-| `01-vllm-runtime-trace/` | vLLM 推理 Runtime:decode 调用链 trace、控制变量实验 | 🚧 进行中 |
-| `02-triton-kernels/` | CUDA/Triton GPU 性能:从 reduction 到 paged decode attention | 🚧 进行中 |
-| `03-e2e-benchmark/` | 端到端 benchmark:TTFT / TPOT / 吞吐 / 显存 | ⬜ 未开始 |
-| `04-compiler-notes/` | MLIR / TorchInductor 编译器横向,与 TVM 对比 | ⬜ 未开始 |
-| `05-model-cards/` | 模型结构卡片(MLA、SWA)与适配清单 | ⬜ 未开始 |
-| `learning-plans/` | 季度学习计划与验收标准 | 持续更新 |
-| `scripts/` | 本地环境初始化脚本 | — |
-| `assets/` | 图、调用链图、曲线等公共素材 | — |
-
-### 学习计划与本地环境
-
-季度计划已合并到 [`learning-plans/`](./learning-plans/README.md)，与实验和阅读笔记一起维护。
-
-本地项目根目录：`/Users/jankoski/inference-lab`。安装 [uv](https://docs.astral.sh/uv/getting-started/installation/) 后运行：
+先安装 Git 和 [uv](https://docs.astral.sh/uv/getting-started/installation/)，然后执行：
 
 ```bash
-cd /Users/jankoski/inference-lab
+git clone --branch MacOS --recurse-submodules \
+  https://github.com/Jankoski-7c00/llm-inference-lab.git \
+  ~/inference-lab
+cd ~/inference-lab
 bash scripts/setup_env.sh
-uv run python
 ```
 
-脚本创建项目内的 `.venv/`，使用 Python 3.12，安装 IPython、NumPy、PyTorch 和 Transformers。首次安装生成 `uv.lock`；重复运行按锁文件恢复环境。此环境用于源码阅读、tokenizer 和 CPU 张量练习，完整 vLLM / CUDA / Triton 环境另行配置。初次安装需要网络，不下载模型权重。
+项目目录名使用 `inference-lab`，GitHub 仓库地址仍为 `llm-inference-lab`。脚本自动准备 Python 3.12，在项目内创建 `.venv/`，按 `uv.lock` 恢复依赖并验证导入和 CPU 计算。重复运行不会升级锁定的依赖。初次安装需要网络，不下载模型权重。
 
-从其他目录也可运行 `bash /Users/jankoski/inference-lab/scripts/setup_env.sh`。配置与锁文件提交到 Git，虚拟环境不提交。仓库远程地址仍为原 `llm-inference-lab` 地址。
+```bash
+uv run python                          # 进入 Python
+uv run ipython                         # 进入交互式学习环境
+uv run python path/to/script.py         # 替换为实际脚本路径
+source .venv/bin/activate               # 可选：手动激活环境
+```
 
-### 2026 Q4 里程碑
+脚本也可以从其他目录调用：`bash ~/inference-lab/scripts/setup_env.sh`。新机器上运行脚本重建环境，无需复制旧机器的 `.venv/`。
 
-- [ ] vLLM decode 全链路 trace + 调用链图
-- [ ] Triton reduction / softmax + 首份 profiling
-- [ ] tiled attention + online softmax,对齐 reference
-- [ ] vLLM 控制变量实验(block size / chunked prefill / prefix caching)
-- [ ] paged KV decode attention 原型(Triton,正确可测)
-- [ ] 编译器分层架构笔记
-- [ ] DeepSeek MLA 结构卡片
-- [ ] 季度复盘(12 月底)
+## 恢复 vLLM submodule
 
-### 脱敏声明
+如果克隆时没有使用 `--recurse-submodules`，在项目根目录执行：
 
-本仓库只含基于开源生态(vLLM / Triton / PyTorch / 公开模型)的学习与实验内容,不包含任何雇主代码与数据。
+```bash
+git submodule update --init --recursive
+git submodule status
+```
 
-### License
+该命令检出主仓库记录的固定提交，不追踪 upstream 最新版本。当前提交为 `db9527a46873454610df6dbedf79a36d6bf1a7f6`（`v0.31.0`）。此 submodule 用于阅读源码；当前脚本未安装完整 vLLM，也不执行 GPU 推理。
 
-MIT — 详见 [LICENSE](./LICENSE)。
+## Mac 上的学习路线
+
+1. 阅读[季度总览](./learning-plans/2026Q4/00_季度总览与执行机制.md)，明确学习目标。
+2. 从[vLLM 起步阅读笔记](./01-vllm-runtime-trace/v0.31.0/00-first-request-reading-notes.md)开始，带着问题追踪单次请求。
+3. 用 IPython、NumPy 和 PyTorch CPU 小脚本验证 token、索引与张量概念；阅读 KV 管理和 Attention metadata，明确区分静态推导与运行观测。
+
+## 2026 Q4 学习方向
+
+- [ ] vLLM decode 全链路 trace 与调用链图
+- [ ] Triton reduction / softmax 与首份 profiling
+- [ ] tiled attention / online softmax 对齐 reference
+- [ ] block size / chunked prefill / prefix caching 控制变量实验
+- [ ] 正确可测的 paged KV decode attention 原型
+- [ ] 编译器分层架构笔记与 DeepSeek MLA 结构卡片
+- [ ] 季度复盘
+
+## License
+
+MIT，详见 [LICENSE](./LICENSE)。vLLM submodule 使用其自身许可证。
