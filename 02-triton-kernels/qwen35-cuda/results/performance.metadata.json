@@ -1,0 +1,30 @@
+{
+  "python": "3.12.11",
+  "packages": {
+    "torch": "2.13.0+cu132",
+    "triton": "3.7.1",
+    "ninja": "1.13.2",
+    "pytest": "9.1.1"
+  },
+  "torch_cuda": "13.2",
+  "repository_commit": "2b601585ce854b3899e9ec60acfa463efd2253d4",
+  "dirty": true,
+  "upstream_commit": "db9527a46873454610df6dbedf79a36d6bf1a7f6",
+  "source_sha256": {
+    "csrc/bindings.cpp": "5b9557c30c2737f0e0c8f4bd861fd00b7a8112e9d83f60b6bc8a68ad208173b6",
+    "csrc/kernels.cu": "7855ef931514742ded0c57ce16c33d3137f99307543055616053a04f2f2755e2",
+    "qwen35_lab/__init__.py": "4f4d7d7ff5c852fa4d420c68fa2fa1b0c44b196bfe13e084c146cb11a2b5e279",
+    "qwen35_lab/api.py": "0dc06b80c741306d0cf7eb7ce63cfa2862133cb7132318adc91f7d6b3d1bd0d5",
+    "qwen35_lab/cases.py": "0f0a83de3e99f4c681e6eeb5e94940f1df00008ca0b6ccc0f78b5b9150b76adb",
+    "qwen35_lab/exercise.py": "509aac024ad3429251ac7dc64b662942ab970aafb5048242e7d39867d881e5f5",
+    "qwen35_lab/extension.py": "6ddccb80da6966e529e6b6bc223708f884743e6515c98d50460d388b89bb4206",
+    "qwen35_lab/measure.py": "f6586c7b57fd22f200d84dd5ace107b08dc70f0b0673b2608460c284e68c4991",
+    "qwen35_lab/reference.py": "1bec85782273465ebeba8493998a8999f96a64cad1f32c173845ea2a2b05d55f",
+    "qwen35_lab/upstream.py": "5af1290093536559f8756804505c4cfcdd9d81d5895382f5c8024dff3196e32c"
+  },
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "capability": [
+    8,
+    9
+  ]
+}

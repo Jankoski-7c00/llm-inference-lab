@@ -1,0 +1,4 @@
+# Uses an existing CUDA-capable PyTorch installation.
+ninja
+pytest
+# Optional upstream correctness oracles use PyTorch's compatible Triton.

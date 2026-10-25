@@ -1,0 +1,20 @@
+{
+  "python": "3.12.11",
+  "packages": {
+    "torch": "2.13.0+cu132",
+    "triton": "3.7.1",
+    "ninja": "1.13.2",
+    "pytest": "9.1.1"
+  },
+  "torch_cuda": "13.2",
+  "repository_commit": "2b601585ce854b3899e9ec60acfa463efd2253d4",
+  "dirty": true,
+  "upstream_commit": "db9527a46873454610df6dbedf79a36d6bf1a7f6",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "capability": [
+    8,
+    9
+  ],
+  "kernel_sha256": "e6c6ea0914bfd079a146af55fcf581edc02cb8a7ad0b2b5a48eea3ea600b5f71",
+  "delta_optimized_stage": "direct fusion, preserved as impl=fused in the final implementation"
+}

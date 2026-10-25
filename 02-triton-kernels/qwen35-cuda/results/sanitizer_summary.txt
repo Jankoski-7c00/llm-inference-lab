@@ -1,0 +1,8 @@
+memcheck: 26 target combinations with CPU goldens
+========= ERROR SUMMARY: 0 errors
+
+synccheck: 26 target combinations with CPU goldens
+========= ERROR SUMMARY: 0 errors
+
+racecheck: 26 target combinations with CPU goldens
+========= RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)

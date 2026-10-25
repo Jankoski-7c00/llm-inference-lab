@@ -87,6 +87,8 @@ git submodule status
 
 ## GPU 实验路线
 
+新增专项：[Qwen3.5 CUDA 算子面试实战](./02-triton-kernels/qwen35-cuda/README.md)，包含四类算子的实现、测试、14 课讲义与复盘材料；可从[第 1 课](./02-triton-kernels/qwen35-cuda/lessons/01-contracts.md)开始。
+
 1. 阅读[季度总览](./learning-plans/2026Q4/00_季度总览与执行机制.md)，明确学习目标。
 2. 完成 GPU 检查与小模型冒烟测试，按[vLLM 起步阅读笔记](./01-vllm-runtime-trace/v0.31.0/00-first-request-reading-notes.md)记录首次 prefill 和后续 decode。
 3. 追踪实际 runner 与 Attention backend，记录 block table、slot mapping、metadata 与 kernel 调用，再开展 Triton reference 对齐、profiling 和端到端测量。

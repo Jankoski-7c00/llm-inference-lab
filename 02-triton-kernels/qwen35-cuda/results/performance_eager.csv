@@ -1,0 +1,14 @@
+case,op,impl,mode,target_interval_us,p10_us,p90_us,warmup,iters,repeats,reset_in_timing,note,dtype,seed
+cache_decode,cache,baseline,eager,34.79999974370003,30.719999223947525,41.98399931192398,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+cache_decode,cache,optimized,eager,34.07040014863014,30.94400092959404,40.95999896526337,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+dynamic_int8,dynamic,baseline,eager,42.46399961411953,38.91199827194214,46.879999339580536,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+dynamic_int8,dynamic,optimized,eager,32.0543996989727,28.672000393271446,37.53599897027016,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+encoder_short,attention,baseline,eager,44.90559995174408,41.98399931192398,64.70400094985962,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+encoder_short,attention,simt,eager,57.08479955792427,54.27199974656105,55.296000093221664,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+encoder_short,attention,wmma,eager,47.414400056004524,43.007999658584595,56.32000043988228,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+encoder_short,attention,async,eager,49.216000363230705,47.10400104522705,55.296000093221664,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+delta_decode,delta,baseline,eager,58.291200175881386,53.119998425245285,72.7040022611618,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+delta_decode,delta,fused,eager,50.998400151729584,41.98399931192398,70.65600156784058,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+delta_decode,delta,shared,eager,50.20800046622753,45.05600035190582,70.65600156784058,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+delta_decode,delta,tiled,eager,45.9199994802475,40.95999896526337,55.296000093221664,5,10,3,False,eager intervals include CPU submission gaps,float16,17
+delta_decode,delta,optimized,eager,46.406400203704834,41.98399931192398,55.296000093221664,5,10,3,False,eager intervals include CPU submission gaps,float16,17
