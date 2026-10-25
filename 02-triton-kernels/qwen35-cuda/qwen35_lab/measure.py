@@ -6,7 +6,7 @@ import subprocess
 
 import torch
 
-from .extension import LAB_ROOT, REPO_ROOT
+from .extension import LAB_ROOT, REPO_ROOT, kernel_source
 
 
 def metadata():
@@ -27,6 +27,8 @@ def metadata():
     data["source_sha256"] = {str(path.relative_to(LAB_ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
                              for path in [*sorted((LAB_ROOT/"csrc").glob("*")),
                                           *sorted((LAB_ROOT/"qwen35_lab").glob("*.py"))] if path.is_file()}
+    source = kernel_source()
+    data["kernel_source"] = dict(path=str(source), sha256=hashlib.sha256(source.read_bytes()).hexdigest())
     if torch.cuda.is_available():
         data.update(gpu=torch.cuda.get_device_name(), capability=torch.cuda.get_device_capability())
     return data

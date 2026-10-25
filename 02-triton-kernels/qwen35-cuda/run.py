@@ -18,7 +18,7 @@ def main():
     parser.add_argument("command", choices=["list", "build", "check", "bench", "profile"])
     parser.add_argument("--case", choices=PRESETS, default="cache_decode")
     parser.add_argument("--impl", choices=["baseline", "fused", "shared", "tiled", "optimized", "simt", "wmma", "async", "upstream"], default="optimized")
-    parser.add_argument("--dtype", choices=["float32", "float16", "bfloat16"], default="float16")
+    parser.add_argument("--dtype", choices=["float32", "float16", "bfloat16"], default="bfloat16")
     parser.add_argument("--mode", choices=["graph", "eager"], default="graph")
     parser.add_argument("--warmup", type=int, default=5)
     parser.add_argument("--iters", type=int, default=20)

@@ -49,7 +49,15 @@ wandb/
 # --- Profiling / 实验产物 ---
 *.nsys-rep
 *.ncu-rep
+*.ncu-repz
 *.sqlite
 profiles/
 traces/
 outputs/
+
+# Local GPU experiment results and machine-specific setup notes
+/02-triton-kernels/qwen35-cuda/results/pro6000-bf16/
+/02-triton-kernels/qwen35-cuda/results/student-day1-20261025/
+/02-triton-kernels/qwen35-cuda/01-reshape-cache/BF16_REPORT.md
+/02-triton-kernels/qwen35-cuda/04-delta-rule/BF16_REPORT.md
+/02-triton-kernels/qwen35-cuda/REMOTE.md

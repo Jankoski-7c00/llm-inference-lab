@@ -31,6 +31,25 @@ EXERCISES = {
     ),
 }
 
+EXTRA_BLANKS = {
+    "cache": [
+        ("auto kk = *reinterpret_cast<const Pack4<T>*>(k+t*ks.a+h*ks.b+d);",
+         "auto kk = /* TODO: aligned Pack4 K load using token/head strides */;"),
+        ("auto vv = *reinterpret_cast<const Pack4<T>*>(v+t*vs.a+h*vs.b+d);",
+         "auto vv = /* TODO: aligned Pack4 V load using token/head strides */;"),
+        ("*reinterpret_cast<Pack4<Dst>*>(kc+cache_offset(kd,slot,h,d)) = ko;",
+         "/* TODO: store ko to the paged K cache as an aligned Pack4 */"),
+        ("*reinterpret_cast<Pack4<Dst>*>(vc+cache_offset(vd,slot,h,d)) = vo;",
+         "/* TODO: store vo to the paged V cache as an aligned Pack4 */"),
+    ],
+    "delta": [
+        ("for(int u=0;u<8;++u) {s[u]*=decay;pred+=s[u]*kk[u];}",
+         "for(int u=0;u<8;++u) {s[u]*=/* TODO: state decay */;pred+=/* TODO: prediction */;}"),
+        ("float delta=(as_float(v[(int64_t(t)*hv+h)*dv+vr])-pred)*beta_t, o=0;",
+         "float delta=/* TODO: gated residual from V minus the reduced prediction */, o=0;"),
+    ],
+}
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -38,17 +57,20 @@ def main():
     parser.add_argument("--answer", action="store_true")
     args = parser.parse_args()
     original, blank, hint, test = EXERCISES[args.task]
+    replacements = [(original, blank), *EXTRA_BLANKS.get(args.task, [])]
     if args.answer:
-        print(original)
+        print("\n".join(original for original, _ in replacements))
         return
     source = (LAB_ROOT / "csrc" / "kernels.cu").read_text()
-    if source.count(original) != 1:
-        raise RuntimeError("exercise anchor changed; update the worksheet before generating")
+    for original, blank in replacements:
+        if source.count(original) != 1:
+            raise RuntimeError("exercise anchor changed; update the worksheet before generating")
+        source = source.replace(original, blank)
     target = LAB_ROOT / ".cache" / "exercises" / args.task / "kernels.cu"
     if target.exists():
         raise FileExistsError(f"preserving existing student work: {target}")
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(source.replace(original, blank))
+    target.write_text(source)
     print(hint)
     print("Edit:", target)
     print("Then run from repository root:")

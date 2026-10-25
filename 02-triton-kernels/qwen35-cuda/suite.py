@@ -18,7 +18,7 @@ def main():
     parser.add_argument("--cases", default="cache_prefill,dynamic_int8,encoder_short,delta_decode")
     parser.add_argument("--check-only", action="store_true")
     parser.add_argument("--include-upstream", action="store_true")
-    parser.add_argument("--dtype", choices=["float32", "float16", "bfloat16"], default="float16")
+    parser.add_argument("--dtype", choices=["float32", "float16", "bfloat16"], default="bfloat16")
     parser.add_argument("--mode", choices=["graph", "eager"], default="graph")
     parser.add_argument("--iters", type=int, default=20)
     parser.add_argument("--repeats", type=int, default=5)
